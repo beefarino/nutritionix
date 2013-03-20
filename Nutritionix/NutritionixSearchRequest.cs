@@ -82,7 +82,16 @@ namespace Nutritionix
             foreach(Expression<Func<NutritionixItem, object>> field in this)
             {
                 var propertyExpression = field.Body as MemberExpression;
-                if(propertyExpression == null)
+                if (propertyExpression == null)
+                {
+                    var convertExpression = field.Body as UnaryExpression;
+                    if (null != convertExpression)
+                    {
+                        propertyExpression = convertExpression.Operand as MemberExpression;
+                    }
+                }
+
+                if (propertyExpression == null)
                     continue;
 
                 var jsonName = propertyExpression.Member.GetCustomAttributes(true).OfType<JsonPropertyAttribute>().FirstOrDefault();
